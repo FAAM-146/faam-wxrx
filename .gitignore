@@ -3,6 +3,16 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# NetCDF
+*.nc
+
+# Notebooks
+*.ipynb*
+
+# WxRx data
+*.log
+*.tmp
+
 # C extensions
 *.so
 
