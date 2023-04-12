@@ -136,7 +136,7 @@ def scan_tmp_data(data: bytes) -> Generator[tuple[int, Arinc708Message], None, N
         i += 1
 
 
-def _process_tmp_file(data: bytes, tempfile: str, t: Timer, nc: NetCDFWriter, pbar: tqdm|None=None):
+def process_tmp_file(data: bytes, tempfile: str, t: Timer, nc: NetCDFWriter, pbar: tqdm|None=None):
     """
     Process a single raw ARINC 708 file and write the output to a NetCDF file.
 
@@ -165,6 +165,7 @@ def process(tempfiles: list[str], logfile: str, corefile: str, with_progress: bo
         tempfiles (list[str]): A list of raw ARINC 708 files
         logfile (str): The filename of the log file
         corefile (str): The filename of the core file
+        with_progress (bool): Whether to show a progress bar. Defaults to True.
     """
     if with_progress:
         _tqdm = tqdm
@@ -192,6 +193,6 @@ def process(tempfiles: list[str], logfile: str, corefile: str, with_progress: bo
 
             if with_progress:
                 with _tqdm(total=data_len) as pbar:
-                    _process_tmp_file(*args, pbar)
+                    process_tmp_file(*args, pbar)
             else:
-                _process_tmp_file(*args)
+                process_tmp_file(*args)
