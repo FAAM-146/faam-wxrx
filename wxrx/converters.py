@@ -1,7 +1,7 @@
 from .arinc import SCAN_ANGLES
 
 
-def scan_angle_from_int(i):
+def scan_angle_from_int(i: int) -> float:
     """
     Returns the scan angle from the integer representation.
 
@@ -27,7 +27,7 @@ def scan_angle_from_int(i):
     )
 
 
-def tilt_from_int(i):
+def tilt_from_int(i: int) -> float:
     """
     Returns the tilt angle in degrees.
 
@@ -48,7 +48,7 @@ def tilt_from_int(i):
     )
 
 
-def range_from_int(i):
+def range_from_int(i: int) -> int:
     """
     Returns the range in nautical miles. A value of 0 indicates maximum range,
     320 nautical miles.
@@ -73,7 +73,7 @@ def range_from_int(i):
     }[i]
 
 
-def gain_from_int(i):
+def gain_from_int(i: int) -> int:
     """
     Returns the gain. A value of 0 indicates maximum gain. A value of 1 indicates calibration.
 
