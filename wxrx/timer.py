@@ -1,7 +1,22 @@
+import datetime
+
 import pandas as pd
 
 class Timer:
+    """
+    Provides a timer for a given logfile and tmpfile. This allows the time at which
+    a given size was reached to be calculated. This is used to add a timestamp to
+    the ARINC708 data, which is not timestamped.
+    """
+
     def __init__(self, logfile: str, tmpfile: str = '') -> None:
+        """
+        Create a new Timer object.
+
+        Args:
+            logfile (str): Path to the logfile to use for the timer
+            tmpfile (str): The tmpfile to use for the timer.
+        """
         self.df = pd.read_csv(
             logfile,
             parse_dates=[0],
@@ -24,13 +39,37 @@ class Timer:
 
     
     @property
-    def date(self) -> str:
+    def date(self) -> datetime.date:
+        """
+        Returns the date of the first entry in the logfile.
+        """
         return self.df.index[0].date()
     
     def includes(self, tempfile: str) -> bool:
+        """
+        Indicates whether the timer includes a reference to the given tempfile.
+
+        Args:
+            tempfile (str): The tempfile to check for
+
+        Returns:
+            bool: True if the timer includes the tempfile, False otherwise
+        """
         return tempfile in self.df.tmpfile.unique()
     
     def time_at_size(self, size: int, tmpfile: str='') -> pd.Timestamp:
+        """
+        Returns the time at which the given size was reached.
+
+        Args:
+            size (int): The size to check for
+            tmpfile (str): The tempfile to check for
+
+        Returns:
+            pd.Timestamp: The time at which the given size was reached. This is
+                          a nearest neighbour search, so the returned time may
+                          not be exact.
+        """
         
         # get the index of self.df where the size is closest to the requested size
         if tmpfile:
