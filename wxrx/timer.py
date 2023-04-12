@@ -42,6 +42,9 @@ class Timer:
     def date(self) -> datetime.date:
         """
         Returns the date of the first entry in the logfile.
+
+        Returns:
+            datetime.date: The date of the first entry in the logfile
         """
         return self.df.index[0].date()
     
@@ -66,9 +69,7 @@ class Timer:
             tmpfile (str): The tempfile to check for
 
         Returns:
-            pd.Timestamp: The time at which the given size was reached. This is
-                          a nearest neighbour search, so the returned time may
-                          not be exact.
+            pd.Timestamp: The nearest time to which the given size was reached.
         """
         
         # get the index of self.df where the size is closest to the requested size
