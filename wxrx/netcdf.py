@@ -1,7 +1,6 @@
 import datetime
+from typing import Any
 import uuid
-
-import numpy as np
 
 from netCDF4 import Dataset
 from faam_data import get_product
@@ -48,23 +47,48 @@ ENUM_DATA = {
     'Severe Turbulence': 7
 }
 
-def GLOBAL_OVERWRITES(writer):
+def get_duration(start_time: datetime.datetime, end_time: datetime.datetime) -> str:
+    """
+    Get the duration of the flight in ISO8601 format
+
+    Args:
+        start_time (datetime.datetime): Start time of the flight
+        end_time (datetime.datetime): End time of the flight
+
+    Returns:
+        str: Duration of the flight in ISO8601 format
+    """
+    duration = end_time - start_time
+    hours = duration.seconds // 3600
+    minutes = (duration.seconds % 3600) // 60
+    seconds = duration.seconds % 60
+    return f'PT{hours}H{minutes}M{seconds}S'
+
+
+def GLOBAL_OVERWRITES(writer: 'NetCDFWriter') -> dict[str, Any]:
+    """
+    Get the global attributes for the netCDF file which are not defined in the product definition
+    or in the core file.
+    """
     start_time = datetime.datetime.utcfromtimestamp(int(writer.nc['time'][0]))
     end_time = datetime.datetime.utcfromtimestamp(int(writer.nc['time'][-1]))
+    duration = get_duration(start_time, end_time)
     return {
-        'comment': 'This file is a netCDF representation of the weather radar data from the ARINC708 databus.',
+        'comment': ('This file is a netCDF representation of the weather radar data from '
+                    'the ARINC708 databus.'),
         'constants_file': None,
         'date_created': f'{datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")}Z',
         'processing_software_version': wxrx_version,
         'processing_software_doi': 'TODO',
-        'processing_software_url': 'https://www.gtihub.com/FAAM-146/faam-wxrx',
+        'processing_software_url': 'https://www.github.com/FAAM-146/faam-wxrx',
         'processing_software_commit': None,
         'references': None,
-        'source': 'Captured from the ARINC708 databus on the FAAM WxRx computer, using Copilot and ??? interface',
+        'source': ('Captured from the ARINC708 databus on the FAAM WxRx computer, '
+                   'using Copilot v3 and a Ballard Technology LP708-1 interface card.'),
         'revision_number': 0,
         'revision_date': datetime.date.today().strftime('%Y-%m-%d'),
         'uuid': str(uuid.uuid4()),
-        'time_coverage_duration': 'TODO',
+        'time_coverage_duration': duration,
         'time_coverage_end': end_time.strftime('%Y-%m-%dT%H:%M:%SZ'),
         'time_coverage_start': start_time.strftime('%Y-%m-%dT%H:%M:%SZ'),
         'title': f'FAAM Weather Radar Data for flight {writer.flight_number} on {start_time.strftime("%Y-%m-%d")}',
@@ -73,13 +97,32 @@ def GLOBAL_OVERWRITES(writer):
 }
 
 class NetCDFWriter:
+    """
+    A class to write a netCDF file from the ARINC708 databus weather radar data.
+    """
+
     def __init__(self, corefile: str) -> None:
-        self.filename = self._get_filename(corefile)
+        """
+        Create a new NetCDFWriter object.
+
+        Args:
+            corefile (str): Path to the core file to use for the metadata
+        """
         self.corefile = corefile
+        self.filename: str = ''
         self.flight_date: datetime.datetime = datetime.datetime.min
         self.flight_number: str = ''
 
     def _get_filename(self, corefile: str) -> str:
+        """
+        Get the filename for the netCDF file from the core file.
+
+        Args:
+            corefile (str): Path to the core file to use for the metadata
+
+        Returns:
+            str: Filename for the netCDF file
+        """
         with Dataset(corefile, 'r') as nc:
             self.flight_number = nc.getncattr('flight_number')
             self.flight_date = datetime.datetime.strptime(nc.getncattr('flight_date'), '%Y-%m-%d')
@@ -87,15 +130,15 @@ class NetCDFWriter:
         
 
     def init_file(self) -> None:
+        """
+        Initialise the netCDF file, creating the dimensions and variables from the
+        product definition.
+        """
         product = get_product('wxrx-raw')
         for dimension in product.dimensions:
             self.nc.createDimension(dimension.name, dimension.size)
 
         for variable in product.variables:
-            # try:
-            #     _fill_value = variable.attributes.FillValue
-            # except Exception:
-            #     _fill_value = None
 
             ncvar = self.nc.createVariable(
                 variable.meta.name,
@@ -106,13 +149,20 @@ class NetCDFWriter:
             setattr(self, variable.meta.name, ncvar)
 
             for key, value in variable.attributes:
-                if not value or key == 'FillValue' or 'derived_from_file' in key:
+                if value is None or key == 'FillValue' or 'derived_from_file' in key:
                     continue
                 setattr(ncvar, key, value)
         
 
 
     def write_message(self, time: float, message: Arinc708Message) -> None:
+        """
+        Write a single ARINC708 message to the netCDF file.
+
+        Args:
+            time (float): Time of the message, in seconds since the epoch
+            message (Arinc708Message): The ARINC708 message to write
+        """
         i = len(self.time)
         try:
             self.time[i] = time
@@ -132,24 +182,37 @@ class NetCDFWriter:
             pass
 
     def __enter__(self) -> 'NetCDFWriter':
+        """
+        Context manager entry point. On entry, the netCDF file is opened and initialised.
+        """
+        self.filename = self._get_filename(self.corefile)
         self.nc = Dataset(self.filename, 'w')
         self.init_file()
         return self
     
     def __exit__(self, exc_type: type, exc_value: Exception, traceback: object) -> None:
+        """
+        Context manager exit point. On exit, the netCDF file is closed and the global
+        attributes are written. Though not in that order.
+
+        Args:
+            exc_type (type): Exception type
+            exc_value (Exception): Exception value
+            traceback (object): Traceback object
+        """
+        overwrites = GLOBAL_OVERWRITES(self)
+        
         with Dataset(self.corefile, 'r') as nc:
             for attr in nc.ncattrs():
                 value = nc.getncattr(attr)
-                overwrites = GLOBAL_OVERWRITES(self)
+                
                 if attr in overwrites:
                     value = overwrites[attr]
 
                     while callable(value):
-                        print(value)
                         value = value()
 
-                if value:
-                    print(attr, value)
+                if value is not None:
                     self.nc.setncattr(attr, value)
         self.nc.close()
 
