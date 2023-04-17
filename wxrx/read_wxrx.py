@@ -1,4 +1,5 @@
 from collections.abc import Generator
+import os
 
 from tqdm import tqdm
 
@@ -177,7 +178,7 @@ def process(tempfiles: list[str], logfile: str, corefile: str, with_progress: bo
 
     filtered_tempfiles = []
     for tempfile in tempfiles:
-        if t.includes(tempfile):
+        if t.includes(os.path.basename(tempfile)):
             filtered_tempfiles.append(tempfile)
         else:
             print(f'Excluding {tempfile} from processing: no time data')

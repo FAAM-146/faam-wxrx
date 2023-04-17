@@ -1,4 +1,5 @@
 import datetime
+import os
 
 import pandas as pd
 
@@ -74,6 +75,7 @@ class Timer:
         
         # get the index of self.df where the size is closest to the requested size
         if tmpfile:
+            tmpfile = os.path.basename(tmpfile)
             return self.df[self.df.tmpfile == tmpfile]['size'].sub(size).abs().idxmin()
         return self.df['size'].sub(size).abs().idxmin()
             
