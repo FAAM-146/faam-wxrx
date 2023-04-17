@@ -11,20 +11,7 @@ def scan_angle_from_int(i: int) -> float:
     Returns:
         float: The scan angle in degrees.
     """
-    return (
-        (i & 0x800 > 0) * SCAN_ANGLES[0] +
-        (i & 0x400 > 0) * SCAN_ANGLES[1] +
-        (i & 0x200 > 0) * SCAN_ANGLES[2] +
-        (i & 0x100 > 0) * SCAN_ANGLES[3] +
-        (i & 0x80 > 0) * SCAN_ANGLES[4] +
-        (i & 0x40 > 0) * SCAN_ANGLES[5] +
-        (i & 0x20 > 0) * SCAN_ANGLES[6] + 
-        (i & 0x10 > 0) * SCAN_ANGLES[7] +
-        (i & 0x8 > 0) * SCAN_ANGLES[8] +
-        (i & 0x4 > 0) * SCAN_ANGLES[9] +
-        (i & 0x2 > 0) * SCAN_ANGLES[10] +
-        (i & 0x1 > 0) * SCAN_ANGLES[11]
-    )
+    return i * SCAN_ANGLES[-1]
 
 
 def tilt_from_int(i: int) -> float:
@@ -37,15 +24,7 @@ def tilt_from_int(i: int) -> float:
     Returns:
         float: The tilt angle in degrees.
     """
-    return (
-        (i & 0x40 > 0) * 0.25 +
-        (i & 0x20 > 0) * 0.5 +
-        (i & 0x10 > 0) * 1 +
-        (i & 0x8 > 0) * 2 +
-        (i & 0x4 > 0) * 4 +
-        (i & 0x2 > 0) * 8 -
-        (i & 0x1 > 0) * 16
-    )
+    return (i & 0x40) * (-16) + (i & 0x3f) * .25
 
 
 def range_from_int(i: int) -> int:
