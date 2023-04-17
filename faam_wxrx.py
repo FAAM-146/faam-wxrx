@@ -18,8 +18,11 @@ def main():
     parser.add_argument('--output-dir', '-o', metavar='output_dir', type=str, nargs=1, action='store',
                         help='The output directory', default=['.'])
 
+    parser.add_argument('--quiet', '-q', action='store_true',
+                        help='Run quietly (no consile output)', default=False)
+
     args = parser.parse_args()
-    process(args.tmpfile, args.logfile[0], args.corefile[0])
+    process(args.tmpfile, args.logfile[0], args.corefile[0], with_progress=not args.quiet)
 
 
 if __name__ == '__main__':
