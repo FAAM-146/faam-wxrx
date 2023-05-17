@@ -126,7 +126,7 @@ class NetCDFWriter:
         with Dataset(corefile, 'r') as nc:
             self.flight_number = nc.getncattr('flight_number')
             self.flight_date = datetime.datetime.strptime(nc.getncattr('flight_date'), '%Y-%m-%d')
-            return f'faam-wxrx_{self.flight_date.strftime("%Y%m%d")}_r0_{self.flight_number}_raw.nc'
+            return f'faam-wxrx_{self.flight_date.strftime("%Y%m%d")}_r0_{self.flight_number}_l0.nc'
         
 
     def init_file(self) -> None:
