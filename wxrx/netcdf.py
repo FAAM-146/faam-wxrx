@@ -82,7 +82,7 @@ def GLOBAL_OVERWRITES(writer: 'NetCDFWriter') -> dict[str, Any]:
         'processing_software_doi': 'TODO',
         'processing_software_url': 'https://www.github.com/FAAM-146/faam-wxrx',
         'processing_software_commit': None,
-        'references': None,
+        'references': 'https://doi.org/10.5281/zenodo.7944511',
         'source': ('Captured from the ARINC708 databus on the FAAM WxRx computer, '
                    'using Copilot v3 and a Ballard Technology LP708-1 interface card.'),
         'revision_number': 0,
