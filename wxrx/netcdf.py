@@ -79,7 +79,7 @@ def GLOBAL_OVERWRITES(writer: 'NetCDFWriter') -> dict[str, Any]:
         'constants_file': None,
         'date_created': f'{datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")}Z',
         'processing_software_version': wxrx_version,
-        'processing_software_doi': 'TODO',
+        'processing_software_doi': '10.5281/zenodo.7944619',
         'processing_software_url': 'https://www.github.com/FAAM-146/faam-wxrx',
         'processing_software_commit': None,
         'references': 'https://doi.org/10.5281/zenodo.7944511',
