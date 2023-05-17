@@ -3,7 +3,7 @@ Dataset Description
 ===================
 
 The FAAM provided weather radar data are provided in a netCDF file. The
-file is essentially a low-level represention of the raw aring data, with
+file is essentially a low-level represention of the raw ARINC708 data, with
 the exception of the following:
 
 * Range (nm)

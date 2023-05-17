@@ -25,7 +25,7 @@ def setup(app):
 
 project = 'FAAM ARINC708 Weather Radar Processing'
 copyright = f'{datetime.datetime.now().year}, FAAM'
-author = 'FAAM'
+author = 'Dave Sproson'
 release = wxrx_version
 version = wxrx_version
 

@@ -18,6 +18,6 @@ independently of the cockpit display.
 
 Each scan provides 512 bins between the aircraft and the current range limit, categorized
 using an integer code between 0 and 7, along with information such as tilt, scan angle,
-range and gain. The radar data is stored as a binary file, which is then converted to
+range and gain. The radar data are stored as a binary file, which is then converted to
 netCDF format for easier analysis, using this software. During the conversion, the
-range, tilt, scan angle and gain are comverted from bit represention to physical units.
+range, tilt, scan angle and gain are converted from bit represention to physical units.
