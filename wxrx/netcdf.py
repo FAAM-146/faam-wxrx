@@ -2,6 +2,8 @@ import datetime
 from typing import Any
 import uuid
 
+import numpy as np
+
 from netCDF4 import Dataset
 from faam_data import get_product
 from vocal.schema_types import type_from_spec
@@ -80,12 +82,12 @@ def GLOBAL_OVERWRITES(writer: 'NetCDFWriter') -> dict[str, Any]:
         'date_created': f'{datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")}Z',
         'processing_software_version': wxrx_version,
         'processing_software_doi': '10.5281/zenodo.7944619',
-        'processing_software_url': 'https://www.github.com/FAAM-146/faam-wxrx',
+        'processing_software_url': 'https://github.com/FAAM-146/faam-wxrx',
         'processing_software_commit': None,
         'references': 'https://doi.org/10.5281/zenodo.7944511',
         'source': ('Captured from the ARINC708 databus on the FAAM WxRx computer, '
                    'using Copilot v3 and a Ballard Technology LP708-1 interface card.'),
-        'revision_number': 0,
+        'revision_number': np.int32(0),
         'revision_date': datetime.date.today().strftime('%Y-%m-%d'),
         'uuid': str(uuid.uuid4()),
         'time_coverage_duration': duration,
@@ -151,6 +153,8 @@ class NetCDFWriter:
             for key, value in variable.attributes:
                 if value is None or key == 'FillValue' or 'derived_from_file' in key:
                     continue
+                if key == 'frequency':
+                    value = np.int32(value)
                 setattr(ncvar, key, value)
         
 
