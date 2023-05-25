@@ -174,18 +174,24 @@ def process(tempfiles: list[str], logfile: str, corefile: str, with_progress: bo
         _tqdm = lambda x: x
 
 
-    t = Timer(logfile)
+    # t = Timer(logfile)
+    filtered_tempfiles = Timer.get_tempfiles(logfile)
+    # print(filtered_tempfiles)
 
-    filtered_tempfiles = []
-    for tempfile in tempfiles:
-        if t.includes(os.path.basename(tempfile)):
-            filtered_tempfiles.append(tempfile)
-        else:
-            print(f'Excluding {tempfile} from processing: no time data')
+    # filtered_tempfiles = []
+    # for tempfile in tempfiles:
+    #     if t.includes(os.path.basename(tempfile)):
+    #         filtered_tempfiles.append(tempfile)
+    #     else:
+    #         print(f'Excluding {tempfile} from processing: no time data')
+    excluded_tempfiles = set(tempfiles) - set(filtered_tempfiles)
+    for tempfile in excluded_tempfiles:
+        print(f'Excluding {tempfile} from processing: no time data')
             
     with NetCDFWriter(corefile) as nc:
 
         for tempfile in _tqdm(filtered_tempfiles):
+            t = Timer(logfile, tempfile)
 
             data = load_tmp_file(tempfile)
             data_len = len(data)

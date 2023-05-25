@@ -61,6 +61,26 @@ class Timer:
         """
         return tempfile in self.df.tmpfile.unique()
     
+    @classmethod
+    def get_tempfiles(cls, logfile: str) -> list[str]:
+        """
+        Returns a list of tempfiles in the given logfile.
+
+        Args:
+            logfile (str): The logfile to check
+
+        Returns:
+            list[str]: A list of tempfiles in the given logfile
+        """
+        data = pd.read_csv(
+            logfile,
+            parse_dates=[0],
+            names=['time', 'size', 'tmpfile'],
+            header=3,
+            index_col=0
+        )
+        return data.tmpfile.unique().tolist()
+    
     def time_at_size(self, size: int, tmpfile: str='') -> pd.Timestamp:
         """
         Returns the time at which the given size was reached.
