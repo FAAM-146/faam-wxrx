@@ -174,16 +174,8 @@ def process(tempfiles: list[str], logfile: str, corefile: str, with_progress: bo
         _tqdm = lambda x: x
 
 
-    # t = Timer(logfile)
     filtered_tempfiles = Timer.get_tempfiles(logfile)
-    # print(filtered_tempfiles)
 
-    # filtered_tempfiles = []
-    # for tempfile in tempfiles:
-    #     if t.includes(os.path.basename(tempfile)):
-    #         filtered_tempfiles.append(tempfile)
-    #     else:
-    #         print(f'Excluding {tempfile} from processing: no time data')
     excluded_tempfiles = set(tempfiles) - set(filtered_tempfiles)
     for tempfile in excluded_tempfiles:
         print(f'Excluding {tempfile} from processing: no time data')
