@@ -30,13 +30,14 @@ class Timer:
             raise ValueError(f'No tmpfile specified and logfile contains multiple tmpfiles')
 
         if tmpfile:
-            self.df = self.df[self.df.tmpfile == tmpfile]
+            self.df = self.df[self.df.tmpfile == os.path.basename(tmpfile)]
 
+        self.df = self.df.drop_duplicates()
         self.df = self.df.asfreq('1s').interpolate()
         self.df.tmpfile.fillna(method='ffill', inplace=True)
 
         if len(self.df) == 0:
-            raise ValueError(f'No data for {tmpfile}')
+            raise ValueError(f'No data for {os.path.basename(tmpfile)}')
 
     
     @property
