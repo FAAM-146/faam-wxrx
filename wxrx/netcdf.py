@@ -146,7 +146,8 @@ class NetCDFWriter:
                 variable.meta.name,
                 type_from_spec(variable.meta.datatype),
                 variable.dimensions,
-                fill_value=variable.attributes.FillValue
+                fill_value=variable.attributes.FillValue,
+                zlib=True
             )
             setattr(self, variable.meta.name, ncvar)
 
