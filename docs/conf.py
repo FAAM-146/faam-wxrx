@@ -10,24 +10,20 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-#import os
-#import sys
-#sys.path.insert(0, os.path.abspath('../../..'))
 import sphinx_rtd_theme
 import datetime
-
 from wxrx import __version__ as wxrx_version
 
 def setup(app):
-    app.add_css_file('mods.css')
+    app.add_css_file('faam.css')
 
 # -- Project information -----------------------------------------------------
 
 project = 'FAAM ARINC708 Weather Radar Processing'
 copyright = f'{datetime.datetime.now().year}, FAAM'
 author = 'Dave Sproson'
-release = wxrx_version
-version = wxrx_version
+release = '1.0'
+version = '1.0'
 
 # -- General configuration ---------------------------------------------------
 
@@ -35,7 +31,9 @@ version = wxrx_version
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx_rtd_theme', 'sphinx.ext.autodoc', 'sphinx.ext.napoleon'
+    'sphinx_rtd_theme',   # Read the docs theme
+    'sphinx.ext.autodoc', # Auto doc code documentation
+    'sphinx.ext.napoleon' # Google style docstrings
 ]
 
 napoleon_include_init_with_doc = True
@@ -49,22 +47,62 @@ templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', 'base_rst']
 
 
-numfig = True
-
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
 html_theme = 'sphinx_rtd_theme'
+html_static_path = ['static']
+html_logo = "static/faam-small.png"
+html_theme_options = {
+    'logo_only': False,
+    'display_version': True,
+}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['static']
-#latex_toplevel_sectioning = 'section'
 latex_elements = {
     'papersize': 'a4paper',
     'extraclassoptions': 'openany,oneside',
+    'preamble': r'''
+        \definecolor{FAAMDarkBlue}{HTML}{252243}
+        \definecolor{FAAMLightBlue}{HTML}{0ABBEF}
+        \usepackage{eso-pic}
+        \usepackage{pict2e}
+        \newcommand\BackgroundPic{
+        \put(300,-260){
+            \color{FAAMLightBlue}\circle*{900}
+        }
+        \put(300,-260){
+            \color{FAAMDarkBlue}\circle*{760}
+        }
+    }''',
+    # Pretty hacky this - escaping from the sphinx macros,
+    # but it sorta kinda works well enough.
+    'maketitle': '''
+        \\AddToShipoutPicture*{{\\BackgroundPic}}
+        \\begin{{titlepage}}
+            \\color{{FAAMDarkBlue}}
+            \\begin{{flushright}}
+                \\sphinxlogo
+                {{\\sffamily
+                    {{\\Huge \\textbf{{ {project} }}}}
+                    \\par\\vspace{{1cm}}
+                    {{\\itshape\\LARGE\\textbf{{ Release {release} }}}}
+                    \\par\\vspace{{3cm}}
+                    {{\\LARGE \\textbf{{{author}}}}}
+                    \\par\\vspace{{3cm}}
+                    {{\\Large \\textbf{{{date}}}}}
+                 }}
+             \\end{{flushright}}
+        \\end{{titlepage}}
+        '''.format(
+            project=project,
+            release=release,
+            author=author,
+            date=datetime.date.today().strftime('%B %-d, %Y')
+        )
 }
 latex_logo = 'static/faam.png'
