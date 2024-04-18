@@ -196,5 +196,5 @@ dependencies:
 - zlib=1.2.13=h166bdaf_4
 - zstd=1.5.2=h3eb15da_6
 - pip:
-  - pydantic==1.10.7
+  - pydantic>=2
   - typing-extensions==4.5.0
