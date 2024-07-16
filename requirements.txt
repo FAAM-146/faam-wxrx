@@ -29,7 +29,7 @@ python-dateutil==2.9.0.post0
 pytz==2024.1
 PyYAML==6.0.1
 requests==2.31.0
-setuptools==68.2.2
+setuptools==70.0.0
 six==1.16.0
 snowballstemmer==2.2.0
 Sphinx==7.3.6
